@@ -186,8 +186,8 @@ def _doctor() -> str:
         "tools.backtest",
         "tools.pipeline",
         "tools.web_search",
-        "tools.os_exec"
-        "tools.fs_access"
+        "tools.os_exec",
+        "tools.fs_access",
     ]
     imported_ok, errors = [], []
     for m in mods:

@@ -26,7 +26,7 @@ try:
     _BACKEND = "ddgs"
 except Exception as e1:  # Fallback to legacy package (still common in the wild)
     try:
-        from ddgs import DDGS  # pip install duckduckgo_search
+        from duckduckgo_search import DDGS  # pip install duckduckgo_search
         _BACKEND = "duckduckgo_search"
     except Exception as e2:
         _IMPORT_ERR = e1 if e1 is not None else e2

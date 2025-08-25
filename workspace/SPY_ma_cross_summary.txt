@@ -1,15 +1,15 @@
-Backtest Summary — SPY [2020-08-24 00:00:00+00:00 → 2025-08-22 00:00:00+00:00]
+Backtest Summary — SPY [2020-01-02 00:00:00+00:00 → 2020-12-31 00:00:00+00:00]
 Strategy: ma_cross
 Params: {}
 Costs: cost=0.0005, slippage=0.0005
 
-Total Return: 69.05%
-CAGR: 17.56%
-Ann.Vol: 13.49%
-Sharpe (rf=0): 1.20
-Max Drawdown: -13.13%
-DD Duration (days): 246
-Win rate: 38.46%
-Trades: 13
-Turnover: 27.0000
+Total Return: 14.23%
+CAGR: 23.16%
+Ann.Vol: 17.93%
+Sharpe (rf=0): 1.16
+Max Drawdown: -15.28%
+DD Duration (days): 71
+Win rate: 50.00%
+Trades: 2
+Turnover: 5.0000
 Ann.Factor: 365.2

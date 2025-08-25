@@ -35,7 +35,9 @@ def _safe_path(relpath: str) -> str:
     relpath = str(relpath).strip()
     if not relpath:
         raise ValueError("Path cannot be empty.")
-    rel_norm = os.path.normpath(relpath).lstrip("/\\")
+    if os.path.isabs(relpath):
+        raise ValueError("Absolute paths are not allowed.")
+    rel_norm = os.path.normpath(relpath)
     base = get_workspace_root()
     abs_path = os.path.abspath(os.path.join(base, rel_norm))
     if os.path.commonpath([base, abs_path]) != base:

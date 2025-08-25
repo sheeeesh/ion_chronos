@@ -10,3 +10,11 @@
 2025-08-24 16:34:13.121373+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385
 2025-08-24 12:44:15.309896 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 858/1226' -> ret=-0.0077 sharpe=0.045 mdd=-0.1967
 2025-08-24 16:44:15.623570+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385
+2025-08-24 22:26:19.447360 - RL train SPY steps=50000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 858/1226' -> ret=-0.1125 sharpe=-0.593 mdd=-0.2404
+2025-08-25 02:26:19.822460+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.001 slip=0.001 -> ret=0.6455 sharpe=1.141 mdd=-0.1347 trades=13 win=0.385
+2025-08-25 03:52:04.078640+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385
+2025-08-24 23:55:01.085580 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 858/1226' -> ret=-0.0065 sharpe=0.053 mdd=-0.2082
+2025-08-25 03:55:01.394940+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385
+2025-08-25 00:02:09.579935 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 1852/2646' -> ret=-0.0045 sharpe=0.072 mdd=-0.1500
+2025-08-25 04:02:10.047246+00:00 - backtest SPY ma_cross start=2015-01-02 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=1.1823 sharpe=0.877 mdd=-0.1528 trades=33 win=0.545
+2025-08-25 04:34:49.679427+00:00 - backtest SPY ma_cross start=2020-01-02 00:00:00+00:00 end=2020-12-31 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.1423 sharpe=1.162 mdd=-0.1528 trades=2 win=0.500

@@ -7,9 +7,7 @@ Capabilities:
 - File ops (relative to workspace/):
     mkdir <path>
     ls [path]
-    rm <path>            (file)
-    rmdir <path>         (empty dir)
-    rm -r <path>         (recursive remove dir)
+    rm <file_or_empty_dir] | rm -r <dir> | rmdir <empty_dir>
     write <path>\n---\n<content>
     append <path>\n---\n<content>
     read <path>
