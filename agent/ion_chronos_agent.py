@@ -25,12 +25,8 @@ from tools.backtest import backtest_signal
 from tools.rl_train import train_rl_agent
 from tools.web_search import web_search
 from tools.file_manager import write_file, read_file
-from tools.fs_access import list_dir, read_text, write_text
+from tools.fs_access import ls, read_text, write_text
 from tools.os_exec import exec_cmd
-
-print(list_dir("~"))                # expands, checks allowlist
-print(read_text("~/Documents/notes.txt"))
-print(exec_cmd("ls -la", workdir="~"))
 
 
 # Optional: one-shot pipeline if present
@@ -204,3 +200,9 @@ def create_agent():
         input_messages_key="input",
         history_messages_key="chat_history",
     )
+
+
+if __name__ == "__main__":
+    print(ls("~"))  # expands, checks allowlist
+    print(read_text("~/Documents/notes.txt"))
+    print(exec_cmd("ls -la", workdir="~"))

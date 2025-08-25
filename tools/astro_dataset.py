@@ -184,6 +184,9 @@ def build_astro_dataset(ticker: str,
     """
     Build and save an astro-enhanced dataset for the given ticker and date range.
 
+    Cached astro features are stored in a parquet file and reused across runs.
+    Defaults to ``workspace/{ticker}_astro_cache.parquet``.
+
     Args:
         ticker: Symbol or ticker (e.g., 'BTC-USD', 'SPY').
         start_date: Start date (YYYY-MM-DD).
@@ -201,11 +204,20 @@ def build_astro_dataset(ticker: str,
     df = _fetch_prices(ticker, start_date, end_date, timeframe)
     if df.empty:
         raise ValueError("No data retrieved for the given range.")
-    # 2) Compute astro features or use placeholders
-    astro = _compute_astro_features_safe(index=df.index, lat=lat, lon=lon,
-                                        house_system="P", orb_deg=orb_deg,
-                                        cache_path=cache_parquet)
-    # 3) Merge price data with astro features
+    # 2) Set up astro cache path
+    cache_parquet = cache_parquet or os.path.join(
+        WORKSPACE, f"{ticker}_astro_cache.parquet"
+    )
+    # 3) Compute astro features or use placeholders
+    astro = _compute_astro_features_safe(
+        index=df.index,
+        lat=lat,
+        lon=lon,
+        house_system="P",
+        orb_deg=orb_deg,
+        cache_path=cache_parquet,
+    )
+    # 4) Merge price data with astro features
     df = _ensure_utc_index(_flatten_columns(df), name="Date").sort_index()
     astro = _ensure_utc_index(_flatten_columns(astro), name="Date").sort_index()
     astro = astro.reindex(df.index)

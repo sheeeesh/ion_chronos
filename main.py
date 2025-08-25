@@ -5,11 +5,14 @@ import argparse
 from uuid import uuid4
 from datetime import datetime
 from dotenv import load_dotenv
+from pyfiglet import Figlet
+
 
 # Pretty terminal rendering (Markdown + styled input). Falls back to plain print if not installed.
 _RICH = False
 console = None
 try:
+    from rich import box
     from rich.console import Console
     from rich.markdown import Markdown
     from rich.panel import Panel
@@ -23,16 +26,16 @@ try:
         "accent": "bold red",
         "border": "red",
         "sep": "grey50",
-        "warn": "yellow",
+        "warn": "#FFC107",  # amber
         "err": "bold bright_red",
         "session": "italic dim",
         # user / assistant cards
-        "user.border": "red",
-        "user.title": "bold red",
-        "user.text": "white",
-        "assistant.border": "red",
-        "assistant.title": "bold red",
-        "assistant.text": "white",
+        "user.border": "#008080",  # teal
+        "user.title": "bold #008080",
+        "user.text": "#008080",
+        "assistant.border": "#FF00FF",  # magenta
+        "assistant.title": "bold #FF00FF",
+        "assistant.text": "#FF00FF",
     })
     console = Console(theme=THEME)
     rich_traceback(show_locals=False)
@@ -61,7 +64,7 @@ except ImportError as e:
             "Failed to import create_agent from agent/ion_chronos_agent.py.\n"
             "Make sure the project layout matches 'agent/ion_chronos_agent.py'.",
             style="err"
-        ), border_style="red"))
+        ), border_style="red", box=box.ROUNDED))
     else:
         print("Failed to import create_agent from agent.ion_chronos_agent.py.")
         print("Make sure the project layout matches 'agent/ion_chronos_agent.py'.")
@@ -124,6 +127,7 @@ def _banner(session_id: str) -> None:
                 subtitle="Type help • doctor • new session • use session <name> • exit",
                 subtitle_align="left",
                 border_style="assistant.border",
+                box=box.ROUNDED,
             )
         )
         console.print(f"[session]session:[/session] [accent]{session_id}[/accent]\n")
@@ -148,6 +152,7 @@ def render_reply(text: str) -> None:
                 title="[assistant.title]⚡ Ion Chronos[/assistant.title]",
                 border_style="assistant.border",
                 padding=(0, 1),
+                box=box.ROUNDED,
             )
         )
         return
@@ -167,6 +172,7 @@ def read_user_input(session_id: str) -> str:
                     title_align="left",
                     border_style="user.border",
                     padding=(0, 1),
+                    box=box.ROUNDED,
                 )
             )
         return raw
@@ -188,6 +194,7 @@ def _doctor() -> str:
         "tools.web_search",
         "tools.os_exec",
         "tools.fs_access",
+        "tools.io_paths",
     ]
     imported_ok, errors = [], []
     for m in mods:
@@ -232,7 +239,7 @@ def _doctor() -> str:
 def run_once(agent, session_id: str, user_input: str) -> str:
     """Invoke the agent once and return the assistant's final text output."""
     if _RICH and console is not None:
-        with console.status("[dim]Thinking…[/dim]", spinner="dots"):
+        with console.status("[accent]Analyzing...[/accent]", spinner="earth"):
             resp = agent.invoke(
                 {"input": user_input},
                 {"configurable": {"session_id": session_id}},
@@ -258,7 +265,7 @@ def run_repl(initial_session: str) -> None:
             console.print(Panel.fit(Text(
                 "Warning: OPENAI_API_KEY not set. The assistant may not be able to call the LLM.",
                 style="warn"
-            ), border_style="border"))
+            ), border_style="border", box=box.ROUNDED))
         else:
             print("Warning: OPENAI_API_KEY not set. The assistant may not be able to call the LLM.\n")
 
@@ -297,7 +304,7 @@ def run_repl(initial_session: str) -> None:
             session_id = str(uuid4())
             msg = f"[info] Started a new session: {session_id}"
             if _RICH and console is not None:
-                console.print(Panel.fit(Text(msg, style="accent"), border_style="border"))
+                console.print(Panel.fit(Text(msg, style="accent"), border_style="border", box=box.ROUNDED))
             else:
                 print(msg)
             continue
@@ -310,7 +317,7 @@ def run_repl(initial_session: str) -> None:
             session_id = parts[2].strip()
             msg = f"[info] Switched to session: {session_id}"
             if _RICH and console is not None:
-                console.print(Panel.fit(Text(msg, style="accent"), border_style="border"))
+                console.print(Panel.fit(Text(msg, style="accent"), border_style="border", box=box.ROUNDED))
             else:
                 print(msg)
             continue
@@ -322,7 +329,7 @@ def run_repl(initial_session: str) -> None:
         except Exception as e:
             err = format_error(e)
             if _RICH and console is not None:
-                console.print(Panel.fit(Text(f"Error during processing: {err}", style="err"), border_style="red"))
+                console.print(Panel.fit(Text(f"Error during processing: {err}", style="err"), border_style="red", box=box.ROUNDED))
             else:
                 print(f"Error during processing: {err}")
 
