@@ -1,0 +1,5 @@
+{
+  "python.defaultInterpreterPath": "C:\\ion_chronos\\ion_env\\Scripts\\python.exe",
+  "python.analysis.extraPaths": ["${workspaceFolder}"]
+}
+

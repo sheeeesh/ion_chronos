@@ -1,0 +1,12 @@
+2025-08-23 16:56:53.641352 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False dd_stop=0.02 max_trd=30 split=0.70 -> ret=-0.0543 sharpe=-0.030 mdd=-0.2332
+2025-08-23 20:56:54.096792+00:00 - backtest SPY ma_cross start=2010-01-04 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=1.7676 sharpe=0.774 mdd=-0.2130 trades=50 win=0.540
+2025-08-23 17:00:37.350534 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False dd_stop=0.02 max_trd=30 split=0.70 -> ret=0.1037 sharpe=0.274 mdd=-0.1640
+2025-08-23 21:00:37.789900+00:00 - backtest SPY ma_cross start=2010-01-04 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=1.7676 sharpe=0.774 mdd=-0.2130 trades=50 win=0.540
+2025-08-23 17:07:23.644478 - RL train SPY steps=100000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False dd_stop=0.02 max_trd=30 split=0.70 -> ret=0.0739 sharpe=0.294 mdd=-0.1566
+2025-08-23 21:07:24.481356+00:00 - backtest SPY ma_cross start=2015-01-02 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=1.1823 sharpe=0.877 mdd=-0.1528 trades=33 win=0.545
+2025-08-23 19:20:22.489675 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='short series (N=33) — overlap eval on last 32 bars' -> ret=0.0000 sharpe=nan mdd=0.0000
+2025-08-23 19:22:38.407627 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='short series (N=33) — overlap eval on last 32 bars' -> ret=0.0000 sharpe=nan mdd=0.0000
+2025-08-24 12:34:12.838015 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 858/1226' -> ret=-0.0065 sharpe=0.053 mdd=-0.2082
+2025-08-24 16:34:13.121373+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385
+2025-08-24 12:44:15.309896 - RL train SPY steps=50000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 858/1226' -> ret=-0.0077 sharpe=0.045 mdd=-0.1967
+2025-08-24 16:44:15.623570+00:00 - backtest SPY ma_cross start=2020-08-24 00:00:00+00:00 end=2025-08-22 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.6905 sharpe=1.199 mdd=-0.1313 trades=13 win=0.385

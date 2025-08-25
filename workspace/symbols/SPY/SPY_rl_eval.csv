@@ -1,0 +1,2 @@
+ticker,steps,extra_steps,window,cost,slippage,continuous,day_stop_dd,max_trades_per_day,n_envs,use_vecnorm,lr,ent_coef,gamma,device,train_split,ann_factor,bars,total_return,cagr,ann_vol,sharpe,max_drawdown,dd_duration_days
+SPY,100000,0,30,0.0005,0.0005,False,0.02,30,1,True,0.0003,0.01,0.99,cpu,0.7,365.25,763,0.07394457028197121,0.04805852846590741,0.15976878215496107,0.2938148978521918,-0.15656243200163356,189

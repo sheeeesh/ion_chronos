@@ -1,0 +1,14 @@
+RL Evaluation Summary
+Ticker: SPY
+Split: standard split @ 858/1226
+Total Return: -0.77%
+CAGR: 0.82%
+Ann.Vol: 18.34%
+Sharpe (rf=0): 0.04
+Max Drawdown: -19.67%
+DD Duration (days): 119
+Model: workspace/SPY_ppo_model.zip
+VecNormalize: workspace/SPY_vecnorm.pkl
+Equity PNG: workspace/SPY_equity.png
+Drawdown PNG: workspace/SPY_drawdown.png
+Trades CSV: workspace/SPY_trades.csv

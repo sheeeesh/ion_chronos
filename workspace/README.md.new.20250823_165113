@@ -1,0 +1,24 @@
+Ion Chronos Workspace - Advanced scaffold
+
+1) Create .env from backend/.env.example and set real JWT_SECRET and DB credentials.
+
+2) Start with Docker (recommended):
+   cd C:\ion_chronos\workspace
+   docker-compose up --build
+
+3) Or run locally:
+   # backend
+   cd C:\ion_chronos\workspace\backend
+   python -m pip install -r requirements.txt
+   $env:PYTHONPATH='C:\ion_chronos\tools'
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+   # worker (separate shell)
+   python worker.py
+
+   # frontend
+   cd C:\ion_chronos\workspace\frontend
+   npm install
+   npm run dev -- --host 0.0.0.0 --port 5173
+
+4) Open frontend at http://localhost:5173 and start a job (use small timesteps).

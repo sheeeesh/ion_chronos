@@ -1,0 +1,6 @@
+body{margin:0;font-family:Inter,system-ui;background:#0f172a;color:#e6eef6}
+.topbar{background:#071026;padding:12px 20px}
+.container{display:flex;gap:16px;padding:20px}
+.left{width:420px}
+.right{flex:1}
+.card{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
