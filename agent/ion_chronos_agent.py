@@ -8,6 +8,8 @@ from __future__ import annotations
 import os
 from typing import Optional
 
+from tools.io_paths import WORKSPACE
+
 from pydantic import BaseModel, Field
 
 from langchain_openai import ChatOpenAI
@@ -23,6 +25,13 @@ from tools.backtest import backtest_signal
 from tools.rl_train import train_rl_agent
 from tools.web_search import web_search
 from tools.file_manager import write_file, read_file
+from tools.fs_access import list_dir, read_text, write_text
+from tools.os_exec import exec_cmd
+
+print(list_dir("~"))                # expands, checks allowlist
+print(read_text("~/Documents/notes.txt"))
+print(exec_cmd("ls -la", workdir="~"))
+
 
 # Optional: one-shot pipeline if present
 try:
@@ -96,7 +105,7 @@ class RLTrainArgs(BaseModel):
 
 # ---------- Memory (persistent chat history) ----------
 
-_MEMORY_DIR = os.path.join("workspace", ".memory")
+_MEMORY_DIR = os.path.join(WORKSPACE, ".memory")
 os.makedirs(_MEMORY_DIR, exist_ok=True)
 
 

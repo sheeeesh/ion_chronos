@@ -23,6 +23,8 @@ import random
 import datetime as dt
 from typing import Optional, List, Dict, Tuple, Callable, Union
 
+from tools.io_paths import WORKSPACE
+
 import numpy as np
 import pandas as pd
 
@@ -89,7 +91,7 @@ def _ensure_standard_price_aliases(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _load_dataframe(ticker: str) -> pd.DataFrame:
-    ws_path = f"workspace/{ticker}_astro_dataset.csv"
+    ws_path = os.path.join(WORKSPACE, f"{ticker}_astro_dataset.csv")
     if os.path.exists(ws_path):
         df = _read_csv_with_dates(ws_path)
     else:
@@ -187,13 +189,13 @@ def _maybe_delete_stale_vecnorm(path: str, expected_dim: int) -> Optional[str]:
             os.remove(path); return f"Deleted {path} (missing obs_rms)."
         old_mean = getattr(rms, "mean", None)
         if old_mean is None:
-            os.remove(path); return f"Deleted {path} (no obs_rms.mean)."
+            os.remove(path); return f"Deleted {os.path.relpath(path)} (no obs_rms.mean)."
         old_dim = int(np.prod(np.shape(old_mean)))
         if old_dim != int(expected_dim):
-            os.remove(path); return f"Deleted {path} (old_dim={old_dim} != expected={expected_dim})."
+            os.remove(path); return f"Deleted {os.path.relpath(path)} (old_dim={old_dim} != expected={expected_dim})."
     except Exception:
         try:
-            os.remove(path); return f"Deleted unreadable {path}."
+            os.remove(path); return f"Deleted unreadable {os.path.relpath(path)}."
         except Exception:
             return None
     return None
@@ -619,7 +621,7 @@ def train_rl_agent(
     )
     venv = DummyVecEnv([make_env_tr for _ in range(max(1, int(n_envs)))])
 
-    vecnorm_path = f"workspace/{ticker}_vecnorm.pkl"
+    vecnorm_path = os.path.join(WORKSPACE, f"{ticker}_vecnorm.pkl")
 
     # Guard against stale VecNormalize (obs_dim mismatch)
     if use_vecnorm:
@@ -690,13 +692,13 @@ def train_rl_agent(
     ann_factor = _annualization_factor(equity_series.index)
     met = _metrics(equity_series, step_return_series, ann_factor)
 
-    model_path = f"workspace/{ticker}_ppo_model.zip"
+    model_path = os.path.join(WORKSPACE, f"{ticker}_ppo_model.zip")
     model.save(model_path)
 
-    out_prefix = f"workspace/{ticker}"
+    out_prefix = os.path.join(WORKSPACE, f"{ticker}")
     _save_plots(equity_series, out_prefix)
 
-    eval_csv = f"workspace/{ticker}_rl_eval.csv"
+    eval_csv = os.path.join(WORKSPACE, f"{ticker}_rl_eval.csv")
     row = dict(
         ticker=ticker,
         steps=int(total_timesteps),
@@ -721,10 +723,10 @@ def train_rl_agent(
     )
     pd.DataFrame([row]).to_csv(eval_csv, index=False)
 
-    trades_path = f"workspace/{ticker}_trades.csv"
+    trades_path = os.path.join(WORKSPACE, f"{ticker}_trades.csv")
     trades.to_csv(trades_path, index=False)
 
-    summary_txt = f"workspace/{ticker}_rl_summary.txt"
+    summary_txt = os.path.join(WORKSPACE, f"{ticker}_rl_summary.txt")
     with open(summary_txt, "w", encoding="utf-8") as f:
         f.write(
             "RL Evaluation Summary\n"
@@ -736,14 +738,14 @@ def train_rl_agent(
             f"Sharpe (rf=0): {met['sharpe']:.2f}\n"
             f"Max Drawdown: {met['max_drawdown']:.2%}\n"
             f"DD Duration (days): {met['dd_duration_days']}\n"
-            f"Model: {model_path}\n"
-            f"VecNormalize: {vecnorm_path if use_vecnorm else 'disabled'}\n"
-            f"Equity PNG: {out_prefix}_equity.png\n"
-            f"Drawdown PNG: {out_prefix}_drawdown.png\n"
-            f"Trades CSV: {trades_path}\n"
+            f"Model: {os.path.relpath(model_path)}\n"
+            f"VecNormalize: {os.path.relpath(vecnorm_path) if use_vecnorm else 'disabled'}\n"
+            f"Equity PNG: {os.path.relpath(out_prefix + '_equity.png')}\n"
+            f"Drawdown PNG: {os.path.relpath(out_prefix + '_drawdown.png')}\n"
+            f"Trades CSV: {os.path.relpath(trades_path)}\n"
         )
 
-    with open("workspace/experiments.log", "a", encoding="utf-8") as log:
+    with open(os.path.join(WORKSPACE, "experiments.log"), "a", encoding="utf-8") as log:
         log.write(
             f"{dt.datetime.now()} - RL train {ticker} "
             f"steps={total_timesteps} +extra={extra_timesteps_after} "
@@ -754,7 +756,11 @@ def train_rl_agent(
 
     return (
         f"RL training completed for {ticker}. "
-        f"Saved model to {model_path}, vecnorm to {vecnorm_path if use_vecnorm else 'N/A'}, "
-        f"metrics to {eval_csv}, summary to {summary_txt}, trades to {trades_path}, "
-        f"and plots to {out_prefix}_equity.png / {out_prefix}_drawdown.png."
+        f"Saved model to {os.path.relpath(model_path)}, "
+        f"vecnorm to {os.path.relpath(vecnorm_path) if use_vecnorm else 'N/A'}, "
+        f"metrics to {os.path.relpath(eval_csv)}, "
+        f"summary to {os.path.relpath(summary_txt)}, "
+        f"trades to {os.path.relpath(trades_path)}, "
+        f"and plots to {os.path.relpath(out_prefix + '_equity.png')} / "
+        f"{os.path.relpath(out_prefix + '_drawdown.png')}."
     )

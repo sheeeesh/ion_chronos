@@ -18,10 +18,13 @@ Artifacts (by ticker, under workspace/):
 from __future__ import annotations
 
 import datetime as dt
+import os
 import re
 from typing import Optional
 
 from pydantic import BaseModel, Field
+
+from tools.io_paths import WORKSPACE
 
 from tools.astro_dataset import build_astro_dataset
 from tools.rl_train import train_rl_agent
@@ -224,24 +227,30 @@ def run_rl_astro_pipeline(
             msgs.append(f"[baseline:ERROR] {e}")
 
     # 4) Quick artifact recap
-    recap = (
-        f"[artifacts]\n"
-        f"  - workspace/{ticker}_astro_dataset.csv\n"
-        f"  - workspace/{ticker}_ppo_model.zip\n"
-        f"  - workspace/{ticker}_rl_eval.csv\n"
-        f"  - workspace/{ticker}_rl_summary.txt\n"
-        f"  - workspace/{ticker}_trades.csv\n"
-        f"  - workspace/{ticker}_equity.png\n"
-        f"  - workspace/{ticker}_drawdown.png\n"
-    )
+    root = WORKSPACE
+    recap = f"[artifacts] (root: {root})\n"
+    artifacts = [
+        f"{ticker}_astro_dataset.csv",
+        f"{ticker}_ppo_model.zip",
+        f"{ticker}_rl_eval.csv",
+        f"{ticker}_rl_summary.txt",
+        f"{ticker}_trades.csv",
+        f"{ticker}_equity.png",
+        f"{ticker}_drawdown.png",
+    ]
+    for art in artifacts:
+        recap += f" - {os.path.relpath(os.path.join(root, art), root)}\n"
+    
     if run_baseline:
-        recap += (
-            f"  - workspace/{ticker}_{baseline_strategy}_metrics.csv\n"
-            f"  - workspace/{ticker}_{baseline_strategy}_trades.csv\n"
-            f"  - workspace/{ticker}_{baseline_strategy}_equity.png\n"
-            f"  - workspace/{ticker}_{baseline_strategy}_drawdown.png\n"
-            f"  - workspace/{ticker}_{baseline_strategy}_summary.txt\n"
-        )
+        base_artifacts = [
+            f"{ticker}_{baseline_strategy}_metrics.csv",
+            f"{ticker}_{baseline_strategy}_trades.csv",
+            f"{ticker}_{baseline_strategy}_equity.png",
+            f"{ticker}_{baseline_strategy}_drawdown.png",
+            f"{ticker}_{baseline_strategy}_summary.txt",
+        ]
+        for art in base_artifacts:
+            recap += f" - {os.path.relpath(os.path.join(root, art), root)}\n"
     msgs.append(recap)
 
     return "\n".join(msgs)

@@ -171,12 +171,16 @@ def _save_plots(equity: pd.Series, out_prefix: str) -> None:
     equity.plot()
     plt.title("Equity Curve"); plt.xlabel("Time"); plt.ylabel("Equity (start=1.0)")
     plt.tight_layout(); plt.savefig(equity_path); plt.close()
+    rel = os.path.relpath(equity_path, WORKSPACE)
+    print(f"Saved equity plot → {rel} (root: {WORKSPACE})")
     roll_max = equity.cummax()
     drawdown = equity / roll_max - 1.0
     plt.figure(figsize=(10, 4))
     drawdown.plot()
     plt.title("Drawdown"); plt.xlabel("Time"); plt.ylabel("Drawdown")
     plt.tight_layout(); plt.savefig(dd_path); plt.close()
+    rel = os.path.relpath(dd_path, WORKSPACE)
+    print(f"Saved drawdown plot → {rel} (root: {WORKSPACE})")
 
 # ----------------------------- Strategies -----------------------------
 
@@ -296,13 +300,18 @@ def backtest_signal(ticker: str,
     equity, step_returns, trades_df, metrics = _run_backtest(df, positions, cost=cost, slippage=slippage)
     strat = strategy.lower()
     prefix_abs = os.path.join(WORKSPACE, f"{ticker}_{strat}")
-    prefix_rel = f"workspace/{ticker}_{strat}"
+    prefix_rel = os.path.relpath(prefix_abs, WORKSPACE)
     _save_plots(equity, prefix_abs)
     # Save metrics and trades
-    pd.DataFrame([metrics]).to_csv(f"{prefix_abs}_metrics.csv", index=False)
-    trades_df.to_csv(f"{prefix_abs}_trades.csv", index=False)
+    metrics_path = f"{prefix_abs}_metrics.csv"
+    pd.DataFrame([metrics]).to_csv(metrics_path, index=False)
+    print(f"Saved metrics → {os.path.relpath(metrics_path, WORKSPACE)} (root: {WORKSPACE})")
+    trades_path = f"{prefix_abs}_trades.csv"
+    trades_df.to_csv(trades_path, index=False)
+    print(f"Saved trades → {os.path.relpath(trades_path, WORKSPACE)} (root: {WORKSPACE})")
     # Save summary text
-    with open(f"{prefix_abs}_summary.txt", "w", encoding="utf-8") as f:
+    summary_path = f"{prefix_abs}_summary.txt"
+    with open(summary_path, "w", encoding="utf-8") as f:
         f.write(
             f"Backtest Summary — {ticker} [{df.index.min()} → {df.index.max()}]\n"
             f"Strategy: {strategy}\n"
@@ -319,9 +328,11 @@ def backtest_signal(ticker: str,
             f"Turnover: {metrics.get('turnover', 0):.4f}\n"
             f"Ann.Factor: {metrics.get('ann_factor', np.nan):.1f}\n"
         )
+    print(f"Saved summary → {os.path.relpath(summary_path, WORKSPACE)} (root: {WORKSPACE})")
     # Append summary to experiments log
     try:
-        with open(os.path.join(WORKSPACE, "experiments.log"), "a", encoding="utf-8") as log:
+        log_path = os.path.join(WORKSPACE, "experiments.log")
+        with open(log_path, "a", encoding="utf-8") as log:
             log.write(
                 f"{pd.Timestamp.utcnow()} - backtest {ticker} {strategy} "
                 f"start={df.index.min()} end={df.index.max()} "
@@ -333,7 +344,7 @@ def backtest_signal(ticker: str,
     except Exception:
         pass
     return (
-        "Backtest complete. "
+        f"Backtest complete (root: {WORKSPACE}). "
         f"Metrics: {prefix_rel}_metrics.csv | Trades: {prefix_rel}_trades.csv | "
         f"Equity/Drawdown: {prefix_rel}_equity.png, {prefix_rel}_drawdown.png | "
         f"Summary: {prefix_rel}_summary.txt"
