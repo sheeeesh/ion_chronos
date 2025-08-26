@@ -25,3 +25,9 @@
 2025-08-25 19:34:58.373873 - RL train SPY steps=100000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 2733/3905' -> ret=-0.2927 sharpe=-0.524 mdd=-0.4610
 2025-08-25 19:37:30.487744 - RL train SPY steps=100000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 2733/3905' -> ret=-0.1849 sharpe=-0.269 mdd=-0.3465
 2025-08-26 00:10:28.032411+00:00 - backtest SPY classifier_gated_rl start=2023-01-03 00:00:00+00:00 end=2023-01-31 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=0.0333 sharpe=4.404 mdd=-0.0186 trades=1 win=0.000
+2025-08-25 21:50:36.265768 - RL train SPY steps=100000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 2733/3905' -> ret=-0.3791 sharpe=-0.785 mdd=-0.4336
+2025-08-25 21:52:55.231172 - RL train SPY steps=100000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 2733/3905' -> ret=-0.2927 sharpe=-0.524 mdd=-0.4610
+2025-08-25 21:55:18.396543 - RL train SPY steps=100000 +extra=0 window=30 cost=0.001 slip=0.001 cont=False split='standard split @ 2733/3905' -> ret=-0.1849 sharpe=-0.269 mdd=-0.3465
+2025-08-26 02:16:02.528885+00:00 - astro_dataset SPY [2010-01-01 → present] rows=3935
+2025-08-25 22:18:18.794139 - RL train SPY steps=100000 +extra=0 window=30 cost=0.0005 slip=0.0005 cont=False split='standard split @ 2733/3905' -> ret=-0.1523 sharpe=-0.244 mdd=-0.3212
+2025-08-26 02:18:19.252445+00:00 - backtest SPY ma_cross start=2010-01-04 00:00:00+00:00 end=2025-08-25 00:00:00+00:00 cost=0.0005 slip=0.0005 -> ret=1.7554 sharpe=0.771 mdd=-0.2130 trades=50 win=0.540

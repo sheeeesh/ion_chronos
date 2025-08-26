@@ -1,12 +1,12 @@
 RL Evaluation Summary
 Ticker: SPY
 Split: standard split @ 2733/3905
-Total Return: -18.49%
-CAGR: -4.78%
-Ann.Vol: 18.20%
-Sharpe (rf=0): -0.27
-Max Drawdown: -34.65%
-DD Duration (days): 1202
+Total Return: -15.23%
+CAGR: -3.90%
+Ann.Vol: 16.26%
+Sharpe (rf=0): -0.24
+Max Drawdown: -32.12%
+DD Duration (days): 722
 Model: workspace\SPY_ppo_model.zip
 VecNormalize: workspace\SPY_vecnorm.pkl
 Equity PNG: workspace\SPY_equity.png

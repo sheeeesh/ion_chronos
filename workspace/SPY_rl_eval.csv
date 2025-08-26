@@ -1,2 +1,2 @@
 ticker,steps,extra_steps,window,cost,slippage,continuous,day_stop_dd,max_trades_per_day,n_envs,use_vecnorm,lr,ent_coef,gamma,device,train_split,split_note,ann_factor,bars,total_return,cagr,ann_vol,sharpe,max_drawdown,dd_duration_days
-SPY,100000,0,30,0.001,0.001,False,0.02,30,1,True,0.0003,0.01,0.99,cpu,0.7,standard split @ 2733/3905,365.25,1141,-0.18488074122940823,-0.04776314596435449,0.18198727608990595,-0.26891000917064445,-0.34648005828220085,1202
+SPY,100000,0,30,0.0005,0.0005,False,0.02,30,1,True,0.0003,0.01,0.99,cpu,0.7,standard split @ 2733/3905,365.25,1141,-0.152299671098738,-0.03896535025508774,0.16263240612134336,-0.2443710533385086,-0.321245046861528,722
