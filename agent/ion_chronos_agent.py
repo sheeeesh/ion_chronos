@@ -22,6 +22,10 @@ from langchain_community.chat_message_histories import FileChatMessageHistory
 # ---------- Project tools (keep the tools. prefix) ----------
 from tools.astro_dataset import build_astro_dataset
 from tools.backtest import backtest_signal
+from tools.classifier_backtest import classifier_backtest
+from tools.safe_classifier_backtest import safe_classifier_backtest
+from tools.validation import get_latest_execution_summary
+from tools.result_checker import verify_backtest_artifacts, check_result_plausibility
 from tools.rl_train import train_rl_agent
 from tools.web_search import web_search
 from tools.file_manager import write_file, read_file
@@ -71,6 +75,22 @@ class BacktestArgs(BaseModel):
     start_date: str = Field(..., description="Start date YYYY-MM-DD")
     end_date: Optional[str] = Field(None, description="End date YYYY-MM-DD (optional)")
     strategy: str = Field("ma_cross", description="Strategy name (default: ma_cross)")
+
+
+class ClassifierBacktestArgs(BaseModel):
+    ticker: str = Field(..., description="Ticker symbol")
+    start_date: str = Field(..., description="Start date YYYY-MM-DD")
+    end_date: Optional[str] = Field(None, description="End date YYYY-MM-DD (optional)")
+    threshold: Optional[float] = Field(None, description="Probability threshold for trade entry (auto-optimized if None)")
+    take_profit: float = Field(0.005, description="Take profit level as fraction (e.g., 0.005 = 0.5%)")
+    stop_loss: float = Field(0.01, description="Stop loss level as fraction (e.g., 0.01 = 1%)")
+    cost: float = Field(0.001, description="Transaction cost per trade as fraction")
+    forward_days: int = Field(5, description="Days to look forward for labeling")
+    profit_threshold: float = Field(0.02, description="Minimum return for positive label")
+
+
+class ValidationArgs(BaseModel):
+    ticker: str = Field(..., description="Ticker symbol to validate execution for")
 
 
 class WebSearchArgs(BaseModel):
@@ -145,6 +165,24 @@ def create_agent():
             args_schema=BacktestArgs,
         ),
         StructuredTool.from_function(
+            func=safe_classifier_backtest,
+            name="classifier_backtest",
+            description="Run a classifier-gated backtest using ML predictions with astro+technical features. Includes automatic validation to prevent hallucinated results.",
+            args_schema=ClassifierBacktestArgs,
+        ),
+        StructuredTool.from_function(
+            func=get_latest_execution_summary,
+            name="validate_execution",
+            description="Validate that a recent backtest execution actually occurred and get summary.",
+            args_schema=ValidationArgs,
+        ),
+        StructuredTool.from_function(
+            func=verify_backtest_artifacts,
+            name="verify_artifacts",
+            description="Verify that backtest artifacts exist and contain expected data.",
+            args_schema=ValidationArgs,
+        ),
+        StructuredTool.from_function(
             func=train_rl_agent,
             name="rl_train",
             description="Train a PPO RL agent with hyperparameters and realism knobs (with OOS eval, resume/extra steps).",
@@ -178,7 +216,13 @@ def create_agent():
              "• Use concise, plain English.\n"
              "• Format with Markdown: short intro, then bullets or small sections.\n"
              "• Put file paths in `code`, code in fenced blocks.\n"
-             "• No tool-call traces. End with 1–2 crisp next steps."),
+             "• No tool-call traces. End with 1–2 crisp next steps.\n\n"
+             "CRITICAL EXECUTION RULES:\n"
+             "• ALWAYS use the provided tools for analysis - NEVER generate fake results\n"
+             "• When running backtests, wait for actual tool execution and report real results\n"
+             "• Look for [VALIDATION] markers in tool outputs to confirm real execution\n"
+             "• If a tool fails, report the actual error - do not fabricate success\n"
+             "• Always verify file timestamps and contents match your reported results"),
             MessagesPlaceholder("chat_history"),
             ("human", "{input}"),
             MessagesPlaceholder("agent_scratchpad"),

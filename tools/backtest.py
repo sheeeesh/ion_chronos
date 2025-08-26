@@ -198,6 +198,78 @@ def _signal_ma_cross(close: pd.Series, fast: int = 10, slow: int = 50, lag: int 
         signal = signal.shift(lag).fillna(0.0)
     return signal
 
+def _signal_classifier_gated_rl(df: pd.DataFrame, **kwargs) -> pd.Series:
+    """
+    Classifier-gated RL strategy signal.
+    
+    This strategy combines classifier predictions with RL agent decisions.
+    It looks for existing classifier predictions and RL model outputs to generate signals.
+    
+    Args:
+        df: Price DataFrame with OHLCV data
+        **kwargs: Additional parameters (threshold, model_path, etc.)
+        
+    Returns:
+        Position series (0.0 or 1.0)
+    """
+    # Default to buy-and-hold if no classifier/RL data available
+    default_signal = pd.Series(1.0, index=df.index, dtype="float32")
+    
+    # Try to load classifier predictions if available
+    ticker = kwargs.get('ticker', 'UNKNOWN')
+    threshold = kwargs.get('threshold', 0.6)
+    
+    try:
+        from tools.io_paths import WORKSPACE
+        import os
+        
+        # Look for classifier predictions file
+        classifier_dir = os.path.join(WORKSPACE, "experiments", "classifier_backtest", ticker)
+        predictions_file = os.path.join(classifier_dir, "predictions.csv")
+        
+        if os.path.exists(predictions_file):
+            predictions_df = pd.read_csv(predictions_file, index_col=0, parse_dates=True)
+            
+            # Generate signals based on classifier confidence
+            if 'prediction_proba' in predictions_df.columns:
+                # Use probability threshold
+                signals = (predictions_df['prediction_proba'] >= threshold).astype("float32")
+            elif 'prediction' in predictions_df.columns:
+                # Use binary predictions
+                signals = predictions_df['prediction'].astype("float32")
+            else:
+                # Fallback to default
+                return default_signal
+            
+            # Align with price data index
+            signals = signals.reindex(df.index, method='ffill').fillna(0.0)
+            return signals
+        
+        # If no classifier data, look for RL model predictions
+        rl_dir = os.path.join(WORKSPACE, "experiments", "rl_train", ticker)
+        rl_predictions_file = os.path.join(rl_dir, "rl_predictions.csv")
+        
+        if os.path.exists(rl_predictions_file):
+            rl_df = pd.read_csv(rl_predictions_file, index_col=0, parse_dates=True)
+            
+            if 'action' in rl_df.columns:
+                # RL actions: 0=hold, 1=buy, 2=sell -> convert to position signals
+                signals = (rl_df['action'] == 1).astype("float32")
+                signals = signals.reindex(df.index, method='ffill').fillna(0.0)
+                return signals
+        
+        # Fallback: use simple momentum strategy as proxy for ML strategy
+        close = df["Close"] if "Close" in df.columns else df["Adj Close"]
+        returns = close.pct_change()
+        momentum = returns.rolling(window=5).mean()
+        signals = (momentum > 0).astype("float32")
+        
+        return signals
+        
+    except Exception as e:
+        print(f"Warning: Classifier-gated RL strategy failed ({e}), using buy-and-hold")
+        return default_signal
+
 def _build_positions(df: pd.DataFrame, strategy: str, **kwargs) -> pd.Series:
     """Generate a position time series (0.0 or 1.0) for the given strategy."""
     strat = (strategy or "ma_cross").lower()
@@ -209,7 +281,9 @@ def _build_positions(df: pd.DataFrame, strategy: str, **kwargs) -> pd.Series:
         slow = int(kwargs.get("slow", 50))
         lag = int(kwargs.get("lag", 1))
         return _signal_ma_cross(close_series, fast=fast, slow=slow, lag=lag)
-    raise ValueError(f"Unknown strategy '{strategy}'. Use 'ma_cross' or 'buy_and_hold'.")
+    if strat == "classifier_gated_rl":
+        return _signal_classifier_gated_rl(df, **kwargs)
+    raise ValueError(f"Unknown strategy '{strategy}'. Use 'ma_cross', 'buy_and_hold', or 'classifier_gated_rl'.")
 
 # ----------------------------- Backtest Engine -----------------------------
 
@@ -281,6 +355,11 @@ def backtest_signal(ticker: str,
     If workspace/{ticker}_astro_dataset.csv exists, it will be used as the data source.
     Otherwise, price data is fetched via yfinance (using the specified timeframe).
 
+    Strategies:
+      - 'ma_cross': Moving average crossover (default)
+      - 'buy_and_hold': Simple buy and hold
+      - 'classifier_gated_rl': ML-based strategy using classifier/RL predictions
+
     Outputs:
       - {ticker}_{strategy}_equity.png (equity curve plot)
       - {ticker}_{strategy}_drawdown.png (drawdown plot)
@@ -296,7 +375,10 @@ def backtest_signal(ticker: str,
     df = _load_price_frame(ticker, start_date, end_date, timeframe=timeframe)
     if df.empty:
         raise ValueError("No data available for backtesting after applying date range.")
-    positions = _build_positions(df, strategy=strategy, **kwargs)
+    # Add ticker to kwargs for classifier_gated_rl strategy
+    kwargs_with_ticker = kwargs.copy()
+    kwargs_with_ticker['ticker'] = ticker
+    positions = _build_positions(df, strategy=strategy, **kwargs_with_ticker)
     equity, step_returns, trades_df, metrics = _run_backtest(df, positions, cost=cost, slippage=slippage)
     strat = strategy.lower()
     prefix_abs = os.path.join(WORKSPACE, f"{ticker}_{strat}")

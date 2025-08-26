@@ -1,0 +1,15 @@
+Backtest Summary — SPY [2023-01-03 00:00:00+00:00 → 2023-01-31 00:00:00+00:00]
+Strategy: classifier_gated_rl
+Params: {'threshold': 0.6}
+Costs: cost=0.0005, slippage=0.0005
+
+Total Return: 3.33%
+CAGR: 83.63%
+Ann.Vol: 13.81%
+Sharpe (rf=0): 4.40
+Max Drawdown: -1.86%
+DD Duration (days): 6
+Win rate: 0.00%
+Trades: 1
+Turnover: 3.0000
+Ann.Factor: 365.2

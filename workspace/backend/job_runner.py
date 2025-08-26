@@ -17,6 +17,14 @@ try:
     import backtest as backtest_mod
 except Exception:
     backtest_mod = None
+try:
+    import classifier_backtest as classifier_mod
+except Exception:
+    classifier_mod = None
+try:
+    import validation as validation_mod
+except Exception:
+    validation_mod = None
 
 def _log(fp, msg):
     ts = time.strftime("%Y-%m-%d %H:%M:%S")

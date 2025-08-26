@@ -189,6 +189,22 @@ def _op_shell(cmd: str, timeout: int = DEFAULT_TIMEOUT) -> str:
 
 DELIM = "\n---\n"
 
+def exec_cmd(command: str, workdir: str = None, timeout: int = DEFAULT_TIMEOUT) -> str:
+    """
+    Execute a shell command in the workspace directory.
+    
+    Args:
+        command: The shell command to execute
+        workdir: Working directory (ignored, always uses workspace for safety)
+        timeout: Command timeout in seconds
+    
+    Returns:
+        Command output and execution status
+    """
+    # Ignore workdir parameter for security - always use workspace
+    return os_exec(f"shell: {command}")
+
+
 def os_exec(command: str) -> str:
     """
     Execute a workspace-scoped operation.

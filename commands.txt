@@ -1,2 +1,10 @@
 .\ion_env\Scripts\Activate.ps1
 Get-Content "C:\ion_chronos\workspace\workspace\wf_bootstrap\run.log" -Wait -Tail 50
+• Backend:                                                                                                                                                                                         │
+│     • cd workspace\backend                                                                                                                                                                          │
+│     • python -m pip install -r requirements.txt                                                                                                                                                     │
+│     • uvicorn main:app --reload --host 0.0.0.0 --port 8000                                                                                                                                          │
+│  • Frontend:                                                                                                                                                                                        │
+│     • cd workspace\frontend                                                                                                                                                                         │
+│     • npm install                                                                                                                                                                                   │
+│     • npm run dev -- --host 0.0.0.0 --port 5173 

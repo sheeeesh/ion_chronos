@@ -78,6 +78,8 @@ Type your queries or commands.
 Quick commands:
   help                 Show this help
   doctor               Run a self-check (imports + workspace permissions)
+  validate <TICKER>    Validate recent backtest execution
+  list validated       List tickers with validated executions
   new session          Start a fresh memory session (new session_id)
   use session <name>   Switch to a named session_id (persistent)
   exit / quit          Leave the assistant
@@ -87,6 +89,8 @@ HELP = """\
 [b]Commands[/b]
   • [bold]help[/bold] — Show this help and some tips.
   • [bold]doctor[/bold] — Verify imports and workspace R/W in one go.
+  • [bold]validate <TICKER>[/bold] — Validate recent backtest execution for a ticker.
+  • [bold]list validated[/bold] — List all tickers with recent validated executions.
   • [bold]new session[/bold] — Start a brand-new memory session with a random session_id.
   • [bold]use session <name>[/bold] — Switch to or create a named session (e.g. research-btc).
   • [bold]exit[/bold] / [bold]quit[/bold] — Leave the assistant.
@@ -94,6 +98,7 @@ HELP = """\
 [i]Notes[/i]
 - Memory depends on a stable session_id across turns (this REPL always passes it).
 - You can also set [code]ION_SESSION_ID[/code] in the environment to pick the initial session.
+- Use [code]validate SPY[/code] to check if recent backtest results are authentic.
 """
 
 def parse_args() -> argparse.Namespace:
@@ -190,11 +195,16 @@ def _doctor() -> str:
         "tools.astro_dataset",
         "tools.astro_features",
         "tools.backtest",
+        "tools.classifier_backtest",
+        "tools.validation",
+        "tools.result_checker",
+        "tools.safe_classifier_backtest",
         "tools.pipeline",
         "tools.web_search",
         "tools.os_exec",
         "tools.fs_access",
         "tools.io_paths",
+        "validation_utils",
     ]
     imported_ok, errors = [], []
     for m in mods:
@@ -298,6 +308,34 @@ def run_repl(initial_session: str) -> None:
                 render_reply(f"```\n{report}\n```")
             except Exception as e:
                 render_reply(f"Doctor failed: {e}")
+            continue
+
+        if low.startswith("validate "):
+            ticker = low.replace("validate ", "").strip().upper()
+            if ticker:
+                try:
+                    from validation_utils import quick_validate
+                    result = quick_validate(ticker)
+                    if result.get("execution_verified"):
+                        render_reply(f"✅ **{ticker} Validation Passed**\n\n{result['summary']}")
+                    else:
+                        render_reply(f"❌ **{ticker} Validation Failed**\n\n{result['execution_details']['reason']}")
+                except Exception as e:
+                    render_reply(f"Validation error: {e}")
+            else:
+                render_reply("Usage: validate <TICKER>")
+            continue
+
+        if low == "list validated":
+            try:
+                from validation_utils import list_validated_tickers
+                tickers = list_validated_tickers()
+                if tickers:
+                    render_reply(f"✅ **Validated Tickers**: {', '.join(tickers)}")
+                else:
+                    render_reply("❌ No validated tickers found")
+            except Exception as e:
+                render_reply(f"Error listing validated tickers: {e}")
             continue
 
         if low == "new session":
